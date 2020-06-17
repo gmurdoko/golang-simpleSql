@@ -32,3 +32,22 @@ func AllBill(db *sql.DB) ([]*Bill, error) {
 	return bills, nil
 
 }
+
+func CreateBill(db *sql.DB, bill Bill) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	stmt, err := db.Prepare("INSERT INTO bill VALUES(?, ?, ?, ?)")
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err := stmt.Exec(bill.BillId, bill.ProductId, bill.Sales, bill.Tax); err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
+}
