@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
 	"github.com/edwardsuwirya/simpleSql/models"
 	"github.com/edwardsuwirya/simpleSql/services"
 	"github.com/edwardsuwirya/simpleSql/utils"
-	"log"
 )
 
 type Env struct {
@@ -23,7 +24,7 @@ var (
 
 func main() {
 	DB_USER = utils.GetEnv("DB_USER", "root")
-	DB_PASSWORD = utils.GetEnv("DB_PASSWORD", "password")
+	DB_PASSWORD = utils.GetEnv("DB_PASSWORD", "toor")
 	DB_HOST = utils.GetEnv("DB_HOST", "localhost")
 	DB_PORT = utils.GetEnv("DB_PORT", "3306")
 	SCHEMA_NAME = utils.GetEnv("DB_SCHEMA", "schema")
