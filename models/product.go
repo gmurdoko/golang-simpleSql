@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	guuid "github.com/google/uuid"
 	"log"
+	"strings"
 )
 
 type Product struct {
@@ -35,6 +36,40 @@ func AllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
 		p := new(Product)
 		//c := new(Category)
 		err := rows.Scan(&p.ProductId, &p.ProductCode, &p.ProductName, &p.ProductCategory.CateogryId, &p.ProductCategory.CategoryName)
+		if err != nil {
+			log.Fatalf("%v", err)
+			return nil, err
+		}
+		products = append(products, p)
+	}
+
+	return products, nil
+}
+
+func FindProductIn(db *sql.DB, ids []string) ([]*Product, error) {
+	sql := `
+		SELECT id,product_code,product_name
+		FROM product 
+		WHERE product_code IN(?` + strings.Repeat(",?", len(ids)-1) + `)`
+	stmt, err := db.Prepare(sql)
+
+	params := make([]interface{}, len(ids))
+	for i, v := range ids {
+		params[i] = v
+	}
+	rows, err := stmt.Query(params...)
+	if err != nil {
+		log.Fatalf("%v", err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	products := make([]*Product, 0)
+
+	for rows.Next() {
+		p := new(Product)
+		err := rows.Scan(&p.ProductId, &p.ProductCode, &p.ProductName)
 		if err != nil {
 			log.Fatalf("%v", err)
 			return nil, err

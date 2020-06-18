@@ -21,6 +21,14 @@ func (ps *ProductService) GetProducts(pageNo, totalPerPage int) []*models.Produc
 	return products
 }
 
+func (ps *ProductService) GetProductsIn(ids []string) []*models.Product {
+	products, err := models.FindProductIn(ps.db, ids)
+	if err != nil {
+		return nil
+	}
+	return products
+}
+
 func (ps *ProductService) CreateAProduct(productCode string, productName string, category string) *models.Product {
 	product := models.Product{
 		ProductCode:     productCode,
