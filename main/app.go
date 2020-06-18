@@ -27,7 +27,7 @@ func main() {
 	DB_PASSWORD = utils.GetEnv("DB_PASSWORD", "toor")
 	DB_HOST = utils.GetEnv("DB_HOST", "localhost")
 	DB_PORT = utils.GetEnv("DB_PORT", "3306")
-	SCHEMA_NAME = utils.GetEnv("DB_SCHEMA", "schema")
+	SCHEMA_NAME = utils.GetEnv("DB_SCHEMA", "simplesql")
 
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, SCHEMA_NAME)
 	db, err := models.InitDB(dataSourceName)
