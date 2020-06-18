@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/dustin/go-humanize"
 	"github.com/edwardsuwirya/simpleSql/models"
 	"github.com/edwardsuwirya/simpleSql/services"
 	"github.com/edwardsuwirya/simpleSql/utils"
@@ -36,11 +35,17 @@ func main() {
 	}
 	env := &Env{db: db}
 
-	billService := services.NewBillService(env.db)
+	//billService := services.NewBillService(env.db)
 	//newBill := billService.CreateABill(8, 4, 12000, 8)
 	//if newBill != nil {
 	//	log.Print(*newBill)
 	//}
-	sales := billService.TotalSales()
-	log.Printf("%v", humanize.Commaf(sales))
+	//sales := billService.TotalSales()
+	//log.Printf("%v", humanize.Commaf(sales))
+
+	productService := services.NewProductService(env.db)
+	products := productService.GetAllProduct(1, 2)
+	for _, p := range products {
+		log.Printf("%v %v %v %v %v", p.ProductId, p.ProductCode, p.ProductName, p.ProductCategory.CateogryId, p.ProductCategory.CategoryName)
+	}
 }
