@@ -13,10 +13,23 @@ func NewProductService(db *sql.DB) *ProductService {
 	return &ProductService{db}
 }
 
-func (ps *ProductService) GetAllProduct(pageNo, totalPerPage int) []*models.Product {
-	products, err := models.GetAllProduct(ps.db, totalPerPage*(pageNo-1), totalPerPage)
+func (ps *ProductService) GetProducts(pageNo, totalPerPage int) []*models.Product {
+	products, err := models.AllProduct(ps.db, totalPerPage*(pageNo-1), totalPerPage)
 	if err != nil {
 		return nil
 	}
 	return products
+}
+
+func (ps *ProductService) CreateAProduct(productCode string, productName string, category string) *models.Product {
+	product := models.Product{
+		ProductCode:     productCode,
+		ProductName:     productName,
+		ProductCategory: models.Category{CateogryId: category},
+	}
+	err := models.CreateProduct(ps.db, product)
+	if err != nil {
+		return nil
+	}
+	return &product
 }

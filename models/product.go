@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	guuid "github.com/google/uuid"
 	"log"
 )
 
@@ -12,7 +13,7 @@ type Product struct {
 	ProductCategory Category
 }
 
-func GetAllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
+func AllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
 	//it is a good practice to always use the LIMIT clause with the ORDER BY clause to constraint the result rows in unique order.
 	rows, err := db.Query(`
 		SELECT p.id,p.product_code,p.product_name,p.category_id,c.category_name
@@ -42,4 +43,26 @@ func GetAllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
 	}
 
 	return products, nil
+}
+func CreateProduct(db *sql.DB, product Product) error {
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatalf("%v", err)
+		return err
+	}
+	stmt, err := db.Prepare("INSERT INTO product(id,product_code,product_name,category_id)  VALUES(?, ?, ?, ?)")
+	if err != nil {
+		tx.Rollback()
+		log.Fatalf("%v", err)
+		return err
+	}
+	defer stmt.Close()
+
+	id := guuid.New()
+	if _, err := stmt.Exec(id, product.ProductCode, product.ProductName, product.ProductCategory.CateogryId); err != nil {
+		tx.Rollback()
+		log.Fatalf("%v", err)
+		return err
+	}
+	return tx.Commit()
 }

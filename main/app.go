@@ -44,7 +44,8 @@ func main() {
 	//log.Printf("%v", humanize.Commaf(sales))
 
 	productService := services.NewProductService(env.db)
-	products := productService.GetAllProduct(1, 2)
+	productService.CreateAProduct("DEA", "Chiki", "5403a1a0-5520-11ea-bb2b-9378803a9e60")
+	products := productService.GetProducts(1, 2)
 	for _, p := range products {
 		log.Printf("%v %v %v %v %v", p.ProductId, p.ProductCode, p.ProductName, p.ProductCategory.CateogryId, p.ProductCategory.CategoryName)
 	}
