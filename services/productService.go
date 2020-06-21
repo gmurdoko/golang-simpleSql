@@ -29,17 +29,18 @@ func (ps *ProductService) GetProductsIn(ids []string) []*models.Product {
 	return products
 }
 
-func (ps *ProductService) CreateAProduct(productCode string, productName string, category string) *models.Product {
-	product := models.Product{
+func (ps *ProductService) CreateAProduct(productCode string, productName string, category string) (*models.Product, error) {
+	product := &models.Product{
 		ProductCode:     productCode,
 		ProductName:     productName,
 		ProductCategory: models.Category{CateogryId: category},
 	}
-	err := models.CreateProduct(ps.db, product)
+	id, err := models.CreateProduct(ps.db, product)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &product
+	product.ProductId = id
+	return product, nil
 }
 
 func (ps *ProductService) GetProductWithPrice() []*models.ProductPrice {

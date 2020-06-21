@@ -18,7 +18,7 @@ func AllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
 	//it is a good practice to always use the LIMIT clause with the ORDER BY clause to constraint the result rows in unique order.
 	rows, err := db.Query(`
 		SELECT p.id,p.product_code,p.product_name,p.category_id,c.category_name
-		FROM product p join category c on p.category_id = c.id 
+		FROM m_product p join m_category c on p.category_id = c.id 
 		ORDER BY p.id 
 		LIMIT ?,?
 		`, pageNo, totalPerPage)
@@ -49,7 +49,7 @@ func AllProduct(db *sql.DB, pageNo, totalPerPage int) ([]*Product, error) {
 func FindProductIn(db *sql.DB, ids []string) ([]*Product, error) {
 	sql := `
 		SELECT id,product_code,product_name
-		FROM product 
+		FROM m_product 
 		WHERE product_code IN(?` + strings.Repeat(",?", len(ids)-1) + `)`
 	stmt, err := db.Prepare(sql)
 
@@ -79,17 +79,17 @@ func FindProductIn(db *sql.DB, ids []string) ([]*Product, error) {
 
 	return products, nil
 }
-func CreateProduct(db *sql.DB, product Product) error {
+func CreateProduct(db *sql.DB, product *Product) (string, error) {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Fatalf("%v", err)
-		return err
+		return "", err
 	}
-	stmt, err := db.Prepare("INSERT INTO product(id,product_code,product_name,category_id)  VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO m_product(id,product_code,product_name,category_id)  VALUES(?, ?, ?, ?)")
 	if err != nil {
 		tx.Rollback()
 		log.Fatalf("%v", err)
-		return err
+		return "", err
 	}
 	defer stmt.Close()
 
@@ -97,7 +97,7 @@ func CreateProduct(db *sql.DB, product Product) error {
 	if _, err := stmt.Exec(id, product.ProductCode, product.ProductName, product.ProductCategory.CateogryId); err != nil {
 		tx.Rollback()
 		log.Fatalf("%v", err)
-		return err
+		return "", err
 	}
-	return tx.Commit()
+	return id.String(), tx.Commit()
 }
