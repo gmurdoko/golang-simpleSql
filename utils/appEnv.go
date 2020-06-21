@@ -1,9 +1,15 @@
 package utils
 
-import "os"
+import (
+	"github.com/spf13/viper"
+)
 
-func GetEnv(key, defaultValue string) string {
-	if envVal, exists := os.LookupEnv(key); exists {
+func ViperGetEnv(key, defaultValue string) string {
+	viper.AutomaticEnv()
+	viper.SetConfigFile(".env")
+	viper.ReadInConfig()
+
+	if envVal := viper.GetString(key); len(envVal) != 0 {
 		return envVal
 	}
 	return defaultValue
