@@ -41,3 +41,11 @@ func (ps *ProductService) CreateAProduct(productCode string, productName string,
 	}
 	return &product
 }
+
+func (ps *ProductService) GetProductWithPrice() []*models.ProductPrice {
+	productPrice, err := models.AllProductPrice(ps.db)
+	if err != nil {
+		return nil
+	}
+	return productPrice
+}

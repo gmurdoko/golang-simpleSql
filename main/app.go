@@ -34,7 +34,7 @@ func main() {
 		log.Panic(err)
 	}
 	env := &Env{db: db}
-
+	defer env.db.Close()
 	//billService := services.NewBillService(env.db)
 	//newBill := billService.CreateABill(8, 4, 12000, 8)
 	//if newBill != nil {
@@ -46,8 +46,12 @@ func main() {
 	productService := services.NewProductService(env.db)
 	//productService.CreateAProduct("DEA", "Chiki", "5403a1a0-5520-11ea-bb2b-9378803a9e60")
 	//products := productService.GetProducts(1, 2)
-	products := productService.GetProductsIn([]string{"DEA", "ZZZ"})
-	for _, p := range products {
-		log.Printf("%v %v %v %v %v", p.ProductId, p.ProductCode, p.ProductName, p.ProductCategory.CateogryId, p.ProductCategory.CategoryName)
+	//products := productService.GetProductsIn([]string{"DEA", "ZZZ"})
+	//for _, p := range products {
+	//	log.Printf("%v %v %v %v %v", p.ProductId, p.ProductCode, p.ProductName, p.ProductCategory.CateogryId, p.ProductCategory.CategoryName)
+	prods := productService.GetProductWithPrice()
+	for _, pp := range prods {
+		log.Printf("%v", pp)
 	}
+
 }
